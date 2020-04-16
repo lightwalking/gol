@@ -27,9 +27,9 @@ function drawGen()
     {
         for (let j=0; j<rows; j++)
         {
-            if (gen[i][j] == 1)
+            if (gen[i][j] > 0)
             {
-                fill(255);
+                fill(256-gen[i][j]);
                 stroke(0);
                 let x = i * res;
                 let y = j * res;
@@ -51,9 +51,13 @@ function computeGen()
             {
                 state = 1;
             }
-            else if ( state == 1 && (neighbors < 2 || neighbors > 3) )
+            else if ( state > 0 && (neighbors < 2 || neighbors > 3) )
             {
                 state = 0;
+            }
+            else if ( state > 0 )
+            {
+                state = (state + 1) % 255;
             }
             nextGen[i][j]=state;
         }
@@ -65,14 +69,18 @@ function computeGen()
 
 function countNeighbors(grid, x, y)
 {
-    let sum = -grid[x][y];
+    let sum = 0;
+    if (grid[x][y] > 0) { sum--; }
     for (let i=-1;i<2;i++)
     {
         for (let j=-1;j<2;j++)
         {
             let col = (x + i + cols) % cols;
             let row = (y + j + rows) % rows;
-            sum += grid[col][row];
+            if (grid[col][row] > 0)
+            {
+                sum++;
+            }
         }
     }
     return sum;
